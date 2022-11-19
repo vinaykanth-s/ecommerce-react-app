@@ -17,25 +17,32 @@ import { IconButton } from "@mui/material";
 import { ShoppingCartSharp } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../feature/cart-slice";
+import { useSelector } from "react-redux";
+import { fetchAllProducts } from "../feature/products-slice";
+import { useSearchParams } from "react-router-dom";
 
 const Home = () => {
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category");
   const theme = useTheme();
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
+  const state = useSelector((state) => state.products);
+  const { value: products, loading } = state ?? {};
   const dispatch = useDispatch();
-  //   async function fetchAll
-  const fetchAllProducts = async () => {
-    const response = await fetch("https://fakestoreapi.com/products");
-    const result = await response.json();
-    setProducts(result);
-  };
-  useEffect(() => {
-    fetchAllProducts();
-  }, []);
+
+  if (!products?.length) {
+    dispatch(fetchAllProducts);
+  }
 
   const addProductToCart = (product) => {
     // dispatch an action
     dispatch(addToCart({ product, quantity: 1 }));
   };
+
+  let filteredProducts =
+    category && category !== "all"
+      ? products.filter((ele) => ele.category === category)
+      : products;
   return (
     <Container sx={{ py: 8 }} maxWidth="lg">
       <Grid container spacing={4}>
@@ -69,8 +76,8 @@ const Home = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "1",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "1",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {product.title}
@@ -82,8 +89,8 @@ const Home = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "2",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "2",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {product.description}
