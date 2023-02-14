@@ -24,6 +24,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTheme } from '@emotion/react'
 import SearchIcon from '@mui/icons-material/Search'
+import { useAuth } from '../firebase/AuthContext'
 
 const Search = styled('section')(({ theme }) => ({
   position: 'relative',
@@ -182,13 +183,31 @@ const SearchBar = () => {
 }
 
 const Header = () => {
+  const { user } = useAuth()
   const cartItems = useSelector((state) => state.cart.value)
   const count = getItemsCount(cartItems)
   const navigate = useNavigate()
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const navigateToCart = () => {
     navigate('/cart')
   }
+
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      id="user-profile-menu"
+      keepMounted
+      transformOrigin={{
+        horizontal: 'right',
+        vertical: 'bottom',
+      }}
+      anchorOrigin={{
+        horizontal: 'right',
+        vertical: 'bottom',
+      }}
+    ></Menu>
+  )
 
   return (
     <AppBar position="sticky" sx={{ py: 1 }}>
@@ -209,7 +228,13 @@ const Header = () => {
             </Badge>
           </IconButton>
         </Box>
-        <Button color="inherit">Login</Button>
+        {user ? (
+          <Button color="inherit">
+            Hello {user.displayName ?? user.email}
+          </Button>
+        ) : (
+          <Button color="inherit">Login</Button>
+        )}
       </Toolbar>
     </AppBar>
   )
