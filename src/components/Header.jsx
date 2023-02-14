@@ -19,7 +19,7 @@ import { MenuItem } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { fetchAllCategories } from '../feature/categories-slice'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTheme } from '@emotion/react'
@@ -64,6 +64,11 @@ const SearchIconWrapper = styled('section')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+}))
+
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.common.white,
+  textDecoration: 'none',
 }))
 
 const SearchBar = () => {
@@ -179,16 +184,22 @@ const SearchBar = () => {
 const Header = () => {
   const cartItems = useSelector((state) => state.cart.value)
   const count = getItemsCount(cartItems)
+  const navigate = useNavigate()
+
+  const navigateToCart = () => {
+    navigate('/cart')
+  }
 
   return (
-    <AppBar position="sticky">
-      <Toolbar>
-        <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
-          Fake Store
+    <AppBar position="sticky" sx={{ py: 1 }}>
+      <Toolbar sx={{ display: 'flex', gap: 2 }}>
+        <Typography variant="h6" color="inherit">
+          <StyledLink to="/">Ecomm Store</StyledLink>
         </Typography>
         <SearchBar />
         <Box sx={{ display: { md: 'flex' } }}>
           <IconButton
+            onClick={navigateToCart}
             size="large"
             aria-label="shows cart items count"
             color="inherit"
