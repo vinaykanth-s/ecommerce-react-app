@@ -8,6 +8,7 @@ import {
   Autocomplete,
   TextField,
   Box,
+  Menu,
 } from '@mui/material'
 import React from 'react'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
@@ -25,6 +26,7 @@ import { useEffect } from 'react'
 import { useTheme } from '@emotion/react'
 import SearchIcon from '@mui/icons-material/Search'
 import { useAuth } from '../firebase/AuthContext'
+// import { signOutUser } from '../firebase/useProvideAuth'
 
 const Search = styled('section')(({ theme }) => ({
   position: 'relative',
@@ -183,16 +185,28 @@ const SearchBar = () => {
 }
 
 const Header = () => {
-  const { user } = useAuth()
+  const { user, signOutUser } = useAuth()
   const cartItems = useSelector((state) => state.cart.value)
   const count = getItemsCount(cartItems)
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null)
-
+  const isMenuOpen = Boolean(anchorEl)
   const navigateToCart = () => {
     navigate('/cart')
   }
 
+  const handleProfileMenuOpen = (e) => {
+    setAnchorEl(e.currentTarget)
+  }
+
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleLogout = async () => {
+    await signOutUser()
+    navigate('/login')
+  }
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -206,37 +220,46 @@ const Header = () => {
         horizontal: 'right',
         vertical: 'bottom',
       }}
-    ></Menu>
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+    </Menu>
   )
 
   return (
-    <AppBar position="sticky" sx={{ py: 1 }}>
-      <Toolbar sx={{ display: 'flex', gap: 2 }}>
-        <Typography variant="h6" color="inherit">
-          <StyledLink to="/">Ecomm Store</StyledLink>
-        </Typography>
-        <SearchBar />
-        <Box sx={{ display: { md: 'flex' } }}>
-          <IconButton
-            onClick={navigateToCart}
-            size="large"
-            aria-label="shows cart items count"
-            color="inherit"
-          >
-            <Badge badgeContent={count} color="error">
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
-        </Box>
-        {user ? (
-          <Button color="inherit">
-            Hello {user.displayName ?? user.email}
-          </Button>
-        ) : (
-          <Button color="inherit">Login</Button>
-        )}
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position="sticky" sx={{ py: 1 }}>
+        <Toolbar sx={{ display: 'flex', gap: 2 }}>
+          <Typography variant="h6" color="inherit">
+            <StyledLink to="/">Ecomm Store</StyledLink>
+          </Typography>
+          <SearchBar />
+          <Box sx={{ display: { md: 'flex' } }}>
+            <IconButton
+              onClick={navigateToCart}
+              size="large"
+              aria-label="shows cart items count"
+              color="inherit"
+            >
+              <Badge badgeContent={count} color="error">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </Box>
+          {user ? (
+            <Button onClick={handleProfileMenuOpen} color="inherit">
+              Hello {user.displayName ?? user.email}
+            </Button>
+          ) : (
+            <Button color="inherit">Login</Button>
+          )}
+        </Toolbar>
+      </AppBar>
+      {renderMenu}
+    </>
   )
 }
 
