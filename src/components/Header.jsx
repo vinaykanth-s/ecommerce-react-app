@@ -251,6 +251,7 @@ const Header = () => {
           </Box>
           {user ? (
             <Button onClick={handleProfileMenuOpen} color="inherit">
+              {console.log({ user })}
               Hello {user.displayName ?? user.email}
             </Button>
           ) : (

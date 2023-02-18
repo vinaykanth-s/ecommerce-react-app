@@ -88,6 +88,13 @@ const Login = () => {
             Sign In
           </Button>
         </form>
+        <Grid container justifyContent={'flex-end'}>
+          <Grid item>
+            <Link variant="body2" href="/register">
+              New User? Sign Up
+            </Link>
+          </Grid>
+        </Grid>
       </Box>
     </Container>
   )
