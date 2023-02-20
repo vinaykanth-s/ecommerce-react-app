@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { createRoutesFromElements } from 'react-router-dom'
+import { createRoutesFromElements, Navigate } from 'react-router-dom'
 import { RouterProvider } from 'react-router-dom'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Layout from './components/Layout'
